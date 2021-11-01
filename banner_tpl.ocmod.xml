@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Banner edit</name>
+	<code>BE</code>
+	<version>1.0.0</version>
+	<author>Babaiev Ihor</author>
+	<link>https://github.com/bald-cat</link>
+
+	<file path="admin/controller/extension/module/banner.php">
+		<operation>
+		<search><![CDATA[$data['entry_status'] = $this->language->get('entry_status'); ]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+			$data['entry_tpl'] = $this->language->get('entry_tpl');
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+
+		<operation>
+			<search><![CDATA[$data['header'] = $this->load->controller('common/header'); ]]></search>
+			<add position="before"><![CDATA[
+			/* Banner Edit - start! */
+			if (isset($this->request->post['tpl'])) {
+			$data['tpl'] = $this->request->post['tpl'];
+		} elseif (!empty($module_info)) {
+			$data['tpl'] = $module_info['tpl'];
+		} else {
+			$data['tpl'] = '';
+		}
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="catalog/controller/extension/module/banner.php">
+		<operation>
+			<search><![CDATA[$data['module'] = $module++;]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+			if(isset($setting['tpl'])){
+                    $tpl='extension/module/'.$setting['tpl'];
+                }else{
+                    $tpl='extension/module/banner';
+                }
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+
+		<operation>
+			<search><![CDATA[return $this->load->view('extension/module/banner', $data);]]></search>
+			<add position="replace"><![CDATA[
+			/* Banner Edit - start! */
+			return $this->load->view($tpl, $data);
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+
+		<operation>
+			<search><![CDATA['image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height'])
+]]></search>
+			<add position="replace"><![CDATA[
+			/* Banner Edit - start! */
+					'image' => 'image/' . $result['image']
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/uk-ua/extension/module/banner.php">
+		<operation>
+			<search><![CDATA[$_['entry_status']     = 'Статус';]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+			$_['entry_tpl']     = 'Шаблон';
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/ru-ru/extension/module/banner.php">
+		<operation>
+			<search><![CDATA[$_['entry_status']     = 'Статус';]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+			$_['entry_tpl']     = 'Шаблон';
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/language/en-gb/extension/module/banner.php">
+		<operation>
+			<search><![CDATA[$_['entry_status']     = 'Status';]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+			$_['entry_tpl']     = 'Template';
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/extension/module/banner.tpl">
+		<operation>
+			<search><![CDATA[        </form>]]></search>
+			<add position="before"><![CDATA[
+			<!-- Banner Edit - start! -->
+			<div class="form-group">
+            <label class="col-sm-2 control-label" for="input-tpl"><?php echo $entry_tpl; ?></label>
+            <div class="col-sm-10">
+              <input type="text" name="tpl" value="<?php echo $tpl; ?>" placeholder="<?php echo $entry_tpl; ?>" id="input-tpl" class="form-control" />
+              <small>* добавьте макет в папку catalog/view/*/template/extension/module, в это поле запишите только название файла</small>
+            </div>
+          </div>
+			<!-- Banner Edit - end! -->
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="replace"><![CDATA[<input type="text" name="height" value="<?php echo $height; ?>" placeholder="<?php echo $entry_height; ?>" id="input-height" class="form-control" />]]></search>
+			<add position="replace"><![CDATA[
+			<!-- Banner Edit - start! -->
+			<input type="hidden">
+			<p>Настраивается в верстке макета</p>
+			<!-- Banner Edit - end! -->
+]]></add>
+		</operation>
+
+		<operation>
+			<search position="replace"><![CDATA[<input type="text" name="width" value="<?php echo $width; ?>" placeholder="<?php echo $entry_width; ?>" id="input-width" class="form-control" />
+]]></search>
+			<add position="replace"><![CDATA[
+			<!-- Banner Edit - start! -->
+			<input type="hidden">
+			<p>Ширина</p>
+			<!-- Banner Edit - end! -->
+]]></add>
+		</operation>
+	</file>
+
+</modification>
