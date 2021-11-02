@@ -8,10 +8,11 @@
 
 	<file path="admin/controller/extension/module/banner.php">
 		<operation>
-		<search><![CDATA[$data['entry_status'] = $this->language->get('entry_status'); ]]></search>
+			<search><![CDATA[$data['entry_status'] = $this->language->get('entry_status'); ]]></search>
 			<add position="after"><![CDATA[
 			/* Banner Edit - start! */
 			$data['entry_tpl'] = $this->language->get('entry_tpl');
+			$data['entry_size_check'] = $this->language->get('entry_size_check');
 			/* Banner Edit - end! */
 			]]></add>
 		</operation>
@@ -26,6 +27,14 @@
 			$data['tpl'] = $module_info['tpl'];
 		} else {
 			$data['tpl'] = '';
+		}
+
+		if (isset($this->request->post['size_check'])) {
+			$data['size_check'] = $this->request->post['size_check'];
+		} elseif (!empty($module_info)) {
+			$data['size_check'] = $module_info['size_check'];
+		} else {
+			$data['size_check'] = '';
 		}
 			/* Banner Edit - end! */
 			]]></add>
@@ -56,11 +65,22 @@
 		</operation>
 
 		<operation>
-			<search><![CDATA['image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height'])
-]]></search>
+			<search><![CDATA['image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height'])]]></search>
 			<add position="replace"><![CDATA[
 			/* Banner Edit - start! */
-					'image' => 'image/' . $result['image']
+					'image' => $image
+			/* Banner Edit - end! */
+			]]></add>
+		</operation>
+
+		<operation>
+			<search><![CDATA[		foreach ($results as $result) {]]></search>
+			<add position="after"><![CDATA[
+			/* Banner Edit - start! */
+		$image = $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']);
+		if($setting['size_check'] == 1){
+			$image = 'image/' . $result['image'];
+		}
 			/* Banner Edit - end! */
 			]]></add>
 		</operation>
@@ -72,6 +92,7 @@
 			<add position="after"><![CDATA[
 			/* Banner Edit - start! */
 			$_['entry_tpl']     = 'Шаблон';
+			$_['entry_size_check']     = 'Источник размеров';
 			/* Banner Edit - end! */
 			]]></add>
 		</operation>
@@ -83,6 +104,7 @@
 			<add position="after"><![CDATA[
 			/* Banner Edit - start! */
 			$_['entry_tpl']     = 'Шаблон';
+			$_['entry_size_check']     = 'Источник размеров';
 			/* Banner Edit - end! */
 			]]></add>
 		</operation>
@@ -94,6 +116,7 @@
 			<add position="after"><![CDATA[
 			/* Banner Edit - start! */
 			$_['entry_tpl']     = 'Template';
+			$_['entry_size_check']     = 'Size source';
 			/* Banner Edit - end! */
 			]]></add>
 		</operation>
@@ -104,7 +127,21 @@
 			<search><![CDATA[        </form>]]></search>
 			<add position="before"><![CDATA[
 			<!-- Banner Edit - start! -->
-			<div class="form-group">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-check_size"><?php echo $entry_size_check; ?></label>
+            <div class="col-sm-10">
+              <select name="size_check" id="input-check_size" class="form-control">
+                <?php if ($size_check) { ?>
+                <option value="1" selected="selected">Указывать размеры в шаблоне</option>
+                <option value="0">Использовать размеры из настроек выше</option>
+                <?php } else { ?>
+                <option value="1">Указывать размеры в шаблоне</option>
+                <option value="0" selected="selected">Использовать размеры из настроек выше</option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label" for="input-tpl"><?php echo $entry_tpl; ?></label>
             <div class="col-sm-10">
               <input type="text" name="tpl" value="<?php echo $tpl; ?>" placeholder="<?php echo $entry_tpl; ?>" id="input-tpl" class="form-control" />
@@ -113,27 +150,6 @@
           </div>
 			<!-- Banner Edit - end! -->
 			]]></add>
-		</operation>
-
-		<operation>
-			<search position="replace"><![CDATA[<input type="text" name="height" value="<?php echo $height; ?>" placeholder="<?php echo $entry_height; ?>" id="input-height" class="form-control" />]]></search>
-			<add position="replace"><![CDATA[
-			<!-- Banner Edit - start! -->
-			<input type="hidden">
-			<p>Настраивается в верстке макета</p>
-			<!-- Banner Edit - end! -->
-]]></add>
-		</operation>
-
-		<operation>
-			<search position="replace"><![CDATA[<input type="text" name="width" value="<?php echo $width; ?>" placeholder="<?php echo $entry_width; ?>" id="input-width" class="form-control" />
-]]></search>
-			<add position="replace"><![CDATA[
-			<!-- Banner Edit - start! -->
-			<input type="hidden">
-			<p>Ширина</p>
-			<!-- Banner Edit - end! -->
-]]></add>
 		</operation>
 	</file>
 
